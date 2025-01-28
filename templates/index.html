@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galería de Imágenes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+        }
+        main {
+            padding: 1rem;
+            max-width: 800px;
+            margin: auto;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            background-color: white;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        form input, form button {
+            padding: 0.5rem;
+            font-size: 1rem;
+        }
+        .gallery {
+            margin-top: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+        .gallery img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .gallery p {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #555;
+            word-wrap: break-word;
+        }
+        footer {
+            margin-top: 2rem;
+            text-align: center;
+        }
+        footer a {
+            color: #4CAF50;
+            font-weight: bold;
+            margin-right: 1rem;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Galería de Imágenes</h1>
+    </header>
+    <main>
+        <form id="upload-form" enctype="multipart/form-data">
+            <label for="alias">Alias:</label>
+            <input type="text" id="alias" name="alias" required>
+            
+            <label for="file">Seleccionar imagen:</label>
+            <input type="file" id="file" name="file" accept="image/*" required>
+            
+            <button type="submit">Subir Imagen</button>
+        </form>
+
+        <footer>
+            <a href="/gallery">Ir a la galería</a>
+            <a href="/admin">Ir a la sección de administrador</a>
+        </footer>
+
+        <div class="gallery" id="gallery"></div>
+    </main>
+    <script>
+        const form = document.getElementById('upload-form');
+        const gallery = document.getElementById('gallery');
+
+        // Manejar la subida de la imagen
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const fileInput = document.getElementById('file');
+            
+            // Validación: verificar que se haya seleccionado un archivo
+            if (!fileInput.files.length) {
+                alert('Por favor selecciona una imagen antes de subir.');
+                return;
+            }
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    alert(result.message);
+                    loadGallery(); // Recargar la galería tras subir una imagen
+                } else {
+                    alert(result.error || 'Error al subir la imagen.');
+                }
+            } catch (error) {
+                alert('Ocurrió un error inesperado al subir la imagen.');
+                console.error('Error:', error);
+            }
+        });
+
+        // Cargar la galería de imágenes
+        async function loadGallery() {
+            try {
+                const response = await fetch('/gallery');
+                if (!response.ok) {
+                    throw new Error('Error al cargar la galería.');
+                }
+
+                const images = await response.json();
+                if (images.length === 0) {
+                    gallery.innerHTML = '<p>No hay imágenes disponibles.</p>';
+                    return;
+                }
+
+                gallery.innerHTML = images.map(img => `
+                    <div>
+                        <img src="/uploads/${img.filename}" alt="${img.alias}">
+                        <p>${img.alias}</p>
+                    </div>
+                `).join('');
+            } catch (error) {
+                
+                console.error('Error:', error);
+            }
+        }
+
+        // Inicializar la galería al cargar la página
+        loadGallery();
+    </script>
+</body>
+</html>

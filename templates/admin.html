@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administración de Imágenes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 1rem;
+        }
+        header {
+            text-align: center;
+            padding: 1rem;
+            background-color: #4CAF50;
+            color: white;
+        }
+        .image-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin: 1rem auto;
+            max-width: 800px;
+        }
+        .image-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background-color: white;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .image-item img {
+            max-width: 100px;
+            border-radius: 5px;
+        }
+        .image-item button {
+            padding: 0.5rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            color: white;
+        }
+        .approve-btn {
+            background-color: #4CAF50;
+        }
+        .reject-btn {
+            background-color: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Administración de Imágenes</h1>
+    </header>
+    <div class="image-list">
+        {% for image in images %}
+        <div class="image-item">
+            <img src="/uploads/{{ image.filename }}" alt="{{ image.alias }}">
+            <p><strong>Alias:</strong> {{ image.alias }}</p>
+            <form action="/approve/{{ image.id }}" method="POST" style="margin: 0;">
+                <button type="submit" class="approve-btn">Aprobar</button>
+            </form>
+            <form action="/reject/{{ image.id }}" method="POST" style="margin: 0;">
+                <button type="submit" class="reject-btn">Rechazar</button>
+            </form>
+            
+        </div>
+        {% endfor %}
+
+        <a href="{{ url_for('gallery_page') }}">Ir a la Galería</a>
+    <a href="{{ url_for('index') }}">Volver al Inicio</a>
+    </div>
+    
+</body>
+</html>

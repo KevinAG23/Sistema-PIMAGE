@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galería de Imágenes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 1rem;
+        }
+        header {
+            text-align: center;
+            padding: 1rem;
+            background-color: #4CAF50;
+            color: white;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem auto;
+            max-width: 1200px;
+        }
+        .gallery-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: white;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .gallery-item img {
+            max-width: 100%;
+            border-radius: 5px;
+        }
+        .gallery-item p {
+            margin-top: 0.5rem;
+            font-weight: bold;
+        }
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Galería de Imágenes</h1>
+    </header>
+    <div class="gallery">
+        {% for image in images %}
+        <div class="gallery-item">
+            <!--<img src="/uploads/{{ image[1] }}" alt="{{ image[0] }}">-->
+            <img src="{{ url_for('uploaded_file', filename=image.filename) }}" alt="{{ image.alias }}">
+            <!--<p>Alias: {{ image[0] }}</p>-->
+            <p>Alias: {{ image.alias }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    <footer>
+        <a href="/" style="color: #4CAF50; font-weight: bold;">Volver al inicio</a>
+    </footer>
+</body>
+</html>
